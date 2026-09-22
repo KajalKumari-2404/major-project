@@ -100,5 +100,59 @@ const getSingleJob = async (req, res) => {
   }
 };
 
+//update job
+const updateJob = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-module.exports = { createJob, getAllJobs, getSingleJob, };
+    const {
+      title,
+      company,
+      description,
+      location,
+      salary,
+      employmentType,
+      skills,
+      status,
+    } = req.body;
+
+    const job = await Job.findById(id);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    // Check job ownership
+    if (job.recruiter.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        message: "You are not allowed to update this job",
+      });
+    }
+
+    job.title = title ?? job.title;
+    job.company = company ?? job.company;
+    job.description = description ?? job.description;
+    job.location = location ?? job.location;
+    job.salary = salary ?? job.salary;
+    job.employmentType = employmentType ?? job.employmentType;
+    job.skills = skills ?? job.skills;
+    job.status = status ?? job.status;
+
+    await job.save();
+
+    res.status(200).json({
+      message: "Job updated successfully",
+      job,
+    });
+  } catch (error) {
+    console.error("Update job error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+module.exports = { createJob, getAllJobs, getSingleJob, updateJob};
