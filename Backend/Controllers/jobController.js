@@ -72,4 +72,33 @@ const getAllJobs = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getAllJobs, };
+
+//getsingle job
+const getSingleJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const job = await Job.findById(id)
+      .populate("recruiter", "name email");
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Job fetched successfully",
+      job,
+    });
+  } catch (error) {
+    console.error("Get single job error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+
+module.exports = { createJob, getAllJobs, getSingleJob, };
