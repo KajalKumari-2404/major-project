@@ -3,6 +3,7 @@ const express = require("express");
 const {
   applyForJob,
   getMyApplications,
+  getRecruiterApplications,
 } = require("../Controllers/applicationController");
 
 const authMiddleware = require("../Middleware/authMiddleware");
@@ -24,6 +25,14 @@ router.get(
   authMiddleware,
   roleMiddleware("student"),
   getMyApplications
+);
+
+// Get applications received by recruiter
+router.get(
+  "/recruiter",
+  authMiddleware,
+  roleMiddleware("recruiter"),
+  getRecruiterApplications
 );
 
 module.exports = router;

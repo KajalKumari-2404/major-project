@@ -6,7 +6,6 @@ const applyForJob = async (req, res) => {
   try {
     const { jobId } = req.params;
 
-    // Check whether job exists
     const job = await Job.findById(jobId);
 
     if (!job) {
@@ -15,14 +14,12 @@ const applyForJob = async (req, res) => {
       });
     }
 
-    // Check whether job is active
     if (job.status !== "active") {
       return res.status(400).json({
         message: "This job is no longer active",
       });
     }
 
-    // Check duplicate application
     const existingApplication = await Application.findOne({
       job: jobId,
       student: req.user.id,
@@ -34,7 +31,6 @@ const applyForJob = async (req, res) => {
       });
     }
 
-    // Create application
     const application = await Application.create({
       job: jobId,
       student: req.user.id,
@@ -80,7 +76,40 @@ const getMyApplications = async (req, res) => {
   }
 };
 
+// Get applications received by logged-in recruiter
+const getRecruiterApplications = async (req, res) => {
+  try {
+    const applications = await Application.find({
+      recruiter: req.user.id,
+    })
+      .populate(
+        "job",
+        "title company location salary employmentType"
+      )
+      .populate(
+        "student",
+        "name email"
+      )
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Recruiter applications fetched successfully",
+      applications,
+    });
+  } catch (error) {
+    console.error(
+      "Get recruiter applications error:",
+      error.message
+    );
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   applyForJob,
   getMyApplications,
+  getRecruiterApplications,
 };
