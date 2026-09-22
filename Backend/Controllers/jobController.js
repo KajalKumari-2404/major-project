@@ -155,4 +155,41 @@ const updateJob = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getAllJobs, getSingleJob, updateJob};
+//delete job
+const deleteJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const job = await Job.findById(id);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    // Check job ownership
+    if (job.recruiter.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this job",
+      });
+    }
+
+    job.status = "closed";
+
+    await job.save();
+
+    res.status(200).json({
+      message: "Job closed successfully",
+      job,
+    });
+  } catch (error) {
+    console.error("Delete job error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+module.exports = { createJob, getAllJobs, getSingleJob, updateJob, deleteJob};
