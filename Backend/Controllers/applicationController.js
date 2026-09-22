@@ -1,0 +1,86 @@
+const Application = require("../Models/Application");
+const Job = require("../Models/Job");
+
+// Apply for a job
+const applyForJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    // Check whether job exists
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+      });
+    }
+
+    // Check whether job is active
+    if (job.status !== "active") {
+      return res.status(400).json({
+        message: "This job is no longer active",
+      });
+    }
+
+    // Check duplicate application
+    const existingApplication = await Application.findOne({
+      job: jobId,
+      student: req.user.id,
+    });
+
+    if (existingApplication) {
+      return res.status(409).json({
+        message: "You have already applied for this job",
+      });
+    }
+
+    // Create application
+    const application = await Application.create({
+      job: jobId,
+      student: req.user.id,
+      recruiter: job.recruiter,
+    });
+
+    res.status(201).json({
+      message: "Job application submitted successfully",
+      application,
+    });
+  } catch (error) {
+    console.error("Apply job error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+// Get logged-in student's applications
+const getMyApplications = async (req, res) => {
+  try {
+    const applications = await Application.find({
+      student: req.user.id,
+    })
+      .populate(
+        "job",
+        "title company location salary employmentType description skills"
+      )
+      .populate("recruiter", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Applications fetched successfully",
+      applications,
+    });
+  } catch (error) {
+    console.error("Get applications error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+module.exports = {
+  applyForJob,
+  getMyApplications,
+};

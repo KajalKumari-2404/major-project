@@ -132,12 +132,25 @@ const logoutUser = (req, res) => {
   });
 };
 
-//get profile
+// get profile
 const getProfile = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
     res.status(200).json({
       message: "Profile accessed successfully",
-      user: req.user,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("Profile error:", error.message);

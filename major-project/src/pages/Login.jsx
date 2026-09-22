@@ -1,7 +1,16 @@
+// import { useState } from "react";
+// import api from "../api/axios";
+// import { useAuth } from "../../store/AuthContext";
+
 import { useState } from "react";
-import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
+import { useAuth } from "../../store/AuthContext";
 
 function Login() {
+    const navigate = useNavigate();
+const { getProfile } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,6 +24,14 @@ function Login() {
       });
 
       console.log("Login response:", response.data);
+
+      // await getProfile();
+      // navigate("/");
+      await getProfile();
+
+console.log("Going to Home...");
+
+navigate("/");
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
     }

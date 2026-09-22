@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./Config/db");
 const authRoutes = require("./Routes/authRoutes");
 const jobRoutes = require("./Routes/jobRoutes");
+const applicationRoutes = require("./Routes/applicationRoutes");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/jobs", jobRoutes);
+app.use("/api/v1/applications", applicationRoutes);
 
 app.get("/", (req, res) => {
   res.json({
