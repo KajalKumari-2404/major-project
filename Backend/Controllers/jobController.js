@@ -51,6 +51,25 @@ const createJob = async (req, res) => {
   }
 };
 
-module.exports = {
-  createJob,
+// Get All Jobs
+const getAllJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ status: "active" })
+      .populate("recruiter", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Jobs fetched successfully",
+      count: jobs.length,
+      jobs,
+    });
+  } catch (error) {
+    console.error("Get all jobs error:", error.message);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
 };
+
+module.exports = { createJob, getAllJobs, };
