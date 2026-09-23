@@ -2,8 +2,9 @@ const bcrypt = require("bcryptjs");
 const User = require("../Models/User");
 const jwt = require("jsonwebtoken");
 
-
-// registerUser
+// ==============================
+// Register User
+// ==============================
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -54,7 +55,9 @@ const registerUser = async (req, res) => {
 };
 
 
-// loginUser
+// ==============================
+// Login User
+// ==============================
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -76,7 +79,10 @@ const loginUser = async (req, res) => {
     }
 
     // Compare password
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isPasswordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
     if (!isPasswordMatch) {
       return res.status(401).json({
@@ -84,33 +90,35 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // Create JWT token
     const token = jwt.sign(
-  {
-    id: user._id,
-    role: user.role,
-  },
-  process.env.JWT_SECRET,
-  {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  }
-);
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      }
+    );
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+    // Store token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
-  message: "Login successful",
-  user: {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  },
-});
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error("Login error:", error.message);
 
@@ -120,6 +128,10 @@ res.cookie("token", token, {
   }
 };
 
+
+// ==============================
+// Logout User
+// ==============================
 const logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -132,7 +144,10 @@ const logoutUser = (req, res) => {
   });
 };
 
-// get profile
+
+// ==============================
+// Get Profile
+// ==============================
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -145,11 +160,23 @@ const getProfile = async (req, res) => {
 
     res.status(200).json({
       message: "Profile accessed successfully",
+
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+
+        phone: user.phone,
+        about: user.about,
+        skills: user.skills,
+        education: user.education,
+        experience: user.experience,
+        projects: user.projects,
+
+        github: user.github,
+        linkedin: user.linkedin,
+        portfolio: user.portfolio,
       },
     });
   } catch (error) {
@@ -161,12 +188,27 @@ const getProfile = async (req, res) => {
   }
 };
 
-// updateProfile
+
+// ==============================
+// Update Profile
+// ==============================
 const updateProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      about,
+      skills,
+      education,
+      experience,
+      projects,
+      github,
+      linkedin,
+      portfolio,
+    } = req.body;
 
-    // Check required fields
+    // Name and email are required
     if (!name || !email) {
       return res.status(400).json({
         message: "Name and email are required",
@@ -185,12 +227,21 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Update user
+    // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       {
         name,
         email,
+        phone: phone || "",
+        about: about || "",
+        skills: skills || "",
+        education: education || "",
+        experience: experience || "",
+        projects: projects || "",
+        github: github || "",
+        linkedin: linkedin || "",
+        portfolio: portfolio || "",
       },
       {
         new: true,
@@ -206,11 +257,23 @@ const updateProfile = async (req, res) => {
 
     res.status(200).json({
       message: "Profile updated successfully",
+
       user: {
         id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,
         role: updatedUser.role,
+
+        phone: updatedUser.phone,
+        about: updatedUser.about,
+        skills: updatedUser.skills,
+        education: updatedUser.education,
+        experience: updatedUser.experience,
+        projects: updatedUser.projects,
+
+        github: updatedUser.github,
+        linkedin: updatedUser.linkedin,
+        portfolio: updatedUser.portfolio,
       },
     });
   } catch (error) {
@@ -222,7 +285,10 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// changePassword
+
+// ==============================
+// Change Password
+// ==============================
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -267,6 +333,7 @@ const changePassword = async (req, res) => {
 
     // Save new password
     user.password = hashedPassword;
+
     await user.save();
 
     res.status(200).json({
@@ -282,4 +349,14 @@ const changePassword = async (req, res) => {
 };
 
 
-module.exports = { registerUser, loginUser, logoutUser, getProfile, updateProfile, changePassword, };
+// ==============================
+// Export Controllers
+// ==============================
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getProfile,
+  updateProfile,
+  changePassword,
+};

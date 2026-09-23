@@ -10,8 +10,16 @@ export const AuthProvider = ({ children }) => {
   const getProfile = async () => {
     try {
       const response = await api.get("/auth/profile");
+
+      console.log("Logged in user:", response.data.user);
+
       setUser(response.data.user);
     } catch (error) {
+      console.error(
+        "Get profile error:",
+        error.response?.data || error.message
+      );
+
       setUser(null);
     } finally {
       setLoading(false);
