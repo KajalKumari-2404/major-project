@@ -108,8 +108,60 @@ const getRecruiterApplications = async (req, res) => {
   }
 };
 
+// Update application status by recruiter
+const updateApplicationStatus = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { status } = req.body;
+
+    const allowedStatuses = [
+      "Applied",
+      "Shortlisted",
+      "Interview",
+      "Rejected",
+      "Selected",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid application status",
+      });
+    }
+
+    const application = await Application.findOne({
+      _id: applicationId,
+      recruiter: req.user.id,
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+
+    application.status = status;
+
+    await application.save();
+
+    res.status(200).json({
+      message: "Application status updated successfully",
+      application,
+    });
+  } catch (error) {
+    console.error(
+      "Update application status error:",
+      error.message
+    );
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   applyForJob,
   getMyApplications,
   getRecruiterApplications,
+  updateApplicationStatus,
 };

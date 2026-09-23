@@ -4,6 +4,7 @@ const {
   applyForJob,
   getMyApplications,
   getRecruiterApplications,
+  updateApplicationStatus,
 } = require("../Controllers/applicationController");
 
 const authMiddleware = require("../Middleware/authMiddleware");
@@ -33,6 +34,14 @@ router.get(
   authMiddleware,
   roleMiddleware("recruiter"),
   getRecruiterApplications
+);
+
+// Update application status by recruiter
+router.put(
+  "/:applicationId/status",
+  authMiddleware,
+  roleMiddleware("recruiter"),
+  updateApplicationStatus
 );
 
 module.exports = router;

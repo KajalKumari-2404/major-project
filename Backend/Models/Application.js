@@ -25,6 +25,7 @@ const applicationSchema = new mongoose.Schema(
       enum: [
         "Applied",
         "Shortlisted",
+        "Interview",
         "Rejected",
         "Selected",
       ],
