@@ -32,7 +32,6 @@ const Navbar = () => {
         {/* Navigation */}
         <div className="flex gap-6 items-center">
 
-          {/* Common Links */}
           <Link
             to="/"
             className="hover:text-blue-400 transition"
@@ -77,24 +76,43 @@ const Navbar = () => {
           {user?.role === "recruiter" && (
             <>
               <Link
+                to="/recruiter/dashboard"
+                className="hover:text-blue-400 transition"
+              >
+                Dashboard
+              </Link>
+
+              <Link
                 to="/recruiter/applications"
                 className="hover:text-blue-400 transition"
               >
                 Applications
               </Link>
+
+              <Link
+                to="/recruiter/jobs"
+                className="hover:text-blue-400 transition"
+              >
+                My Jobs
+              </Link>
+
+              <Link
+                to="/recruiter/jobs/create"
+                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+              >
+                Post Job
+              </Link>
             </>
           )}
 
-          {/* Admin Links */}
+          {/* Admin */}
           {user?.role === "admin" && (
-            <>
-              <Link
-                to="/admin/dashboard"
-                className="hover:text-blue-400 transition"
-              >
-                Admin Dashboard
-              </Link>
-            </>
+            <Link
+              to="/admin/dashboard"
+              className="hover:text-blue-400 transition"
+            >
+              Admin Dashboard
+            </Link>
           )}
 
           {/* Auth */}

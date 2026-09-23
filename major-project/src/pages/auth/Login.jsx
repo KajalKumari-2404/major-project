@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { useAuth } from "../../store/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const { setUser } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,8 +29,32 @@ const Login = () => {
 
       console.log("Login response:", response.data);
 
-      navigate("/");
+      // Get logged-in user profile
+      const profileResponse = await api.get("/auth/profile");
+
+      const loggedInUser = profileResponse.data.user;
+
+      console.log("Logged in user:", loggedInUser);
+
+      // Update AuthContext
+      setUser(loggedInUser);
+
+      // Redirect according to role
+      if (loggedInUser.role === "student") {
+        navigate("/student/dashboard");
+      } else if (loggedInUser.role === "recruiter") {
+        navigate("/recruiter/dashboard");
+      } else if (loggedInUser.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
+      console.error(
+        "Login error:",
+        error.response?.data || error.message
+      );
+
       setError(
         error.response?.data?.message || "Login failed"
       );
