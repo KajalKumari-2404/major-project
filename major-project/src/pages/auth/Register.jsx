@@ -36,6 +36,7 @@ const Register = () => {
       setError("Passwords do not match");
       return;
     }
+    
 
     try {
       setLoading(true);

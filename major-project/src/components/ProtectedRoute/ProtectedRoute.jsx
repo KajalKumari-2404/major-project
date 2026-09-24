@@ -3,6 +3,7 @@ import { useAuth } from "../../store/AuthContext";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
+  
 
   // Loading
   if (loading) {

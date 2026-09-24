@@ -27,6 +27,7 @@ const Home = () => {
             and admins — search jobs, track applications, manage postings,
             and grow your career.
           </p>
+          
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">

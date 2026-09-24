@@ -31,6 +31,7 @@ const { getProfile } = useAuth();
 
 console.log("Going to Home...");
 
+
 navigate("/");
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);

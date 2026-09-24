@@ -37,6 +37,7 @@ const Jobs = () => {
     fetchJobs();
   }, []);
 
+  
   // Search + Filters
   const filteredJobs = jobs.filter((job) => {
     const search = searchTerm.toLowerCase().trim();

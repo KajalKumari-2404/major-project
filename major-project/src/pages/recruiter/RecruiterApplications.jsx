@@ -10,6 +10,7 @@ const RecruiterApplications = () => {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [error, setError] = useState("");
+  
 
   const filters = [
     "All",

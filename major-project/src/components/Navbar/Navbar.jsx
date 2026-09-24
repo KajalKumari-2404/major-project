@@ -55,7 +55,7 @@ const Navbar = () => {
               <Link
                 to="/student/dashboard"
                 className="hover:text-blue-400 transition"
-              >
+            >
                 Dashboard
               </Link>
 

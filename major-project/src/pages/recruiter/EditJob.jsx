@@ -15,6 +15,7 @@ const EditJob = () => {
     skills: "",
     description: "",
   });
+  
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
