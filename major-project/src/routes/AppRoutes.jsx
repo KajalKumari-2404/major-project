@@ -20,6 +20,8 @@ import CreateJob from "../pages/recruiter/CreateJob";
 import MyJobs from "../pages/recruiter/MyJobs";
 import EditJob from "../pages/recruiter/EditJob";
 
+import AdminDashboard from "../pages/admin/AdminDashboard";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -27,29 +29,60 @@ const AppRoutes = () => {
 
       <Routes>
 
-        {/* Home */}
+        {/* ==============================
+            Home
+        ============================== */}
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={["student", "recruiter", "admin"]}
+            >
               <Home />
             </ProtectedRoute>
           }
         />
 
-        {/* Auth */}
+        {/* ==============================
+            Authentication
+        ============================== */}
         <Route path="/login" element={<Login />} />
+
         <Route path="/register" element={<Register />} />
 
-        {/* Jobs */}
-        <Route path="/jobs" element={<Jobs />} />
-        <Route path="/jobs/:id" element={<JobDetails />} />
+        {/* ==============================
+            Jobs
+        ============================== */}
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute
+              allowedRoles={["student", "recruiter", "admin"]}
+            >
+              <Jobs />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Student */}
+        <Route
+          path="/jobs/:id"
+          element={
+            <ProtectedRoute
+              allowedRoles={["student", "recruiter", "admin"]}
+            >
+              <JobDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ==============================
+            Student Routes
+        ============================== */}
+
         <Route
           path="/student/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["student"]}>
               <StudentDashboard />
             </ProtectedRoute>
           }
@@ -58,7 +91,7 @@ const AppRoutes = () => {
         <Route
           path="/student/applications"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["student"]}>
               <MyApplications />
             </ProtectedRoute>
           }
@@ -67,17 +100,20 @@ const AppRoutes = () => {
         <Route
           path="/student/profile"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["student"]}>
               <StudentProfile />
             </ProtectedRoute>
           }
         />
 
-        {/* Recruiter */}
+        {/* ==============================
+            Recruiter Routes
+        ============================== */}
+
         <Route
           path="/recruiter/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["recruiter"]}>
               <RecruiterDashboard />
             </ProtectedRoute>
           }
@@ -86,37 +122,51 @@ const AppRoutes = () => {
         <Route
           path="/recruiter/applications"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["recruiter"]}>
               <RecruiterApplications />
             </ProtectedRoute>
           }
         />
 
-        {/* Create Job */}
+        <Route
+          path="/recruiter/jobs"
+          element={
+            <ProtectedRoute allowedRoles={["recruiter"]}>
+              <MyJobs />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/recruiter/jobs/create"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["recruiter"]}>
               <CreateJob />
             </ProtectedRoute>
           }
         />
+
         <Route
-  path="/recruiter/jobs"
-  element={
-    <ProtectedRoute>
-      <MyJobs />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/recruiter/jobs/edit/:id"
-  element={
-    <ProtectedRoute>
-      <EditJob />
-    </ProtectedRoute>
-  }
-/>
+          path="/recruiter/jobs/edit/:id"
+          element={
+            <ProtectedRoute allowedRoles={["recruiter"]}>
+              <EditJob />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ==============================
+            Admin Routes
+        ============================== */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
     </BrowserRouter>

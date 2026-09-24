@@ -90,6 +90,13 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // Check if user is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: "Your account has been blocked by admin",
+      });
+    }
+
     // Create JWT token
     const token = jwt.sign(
       {

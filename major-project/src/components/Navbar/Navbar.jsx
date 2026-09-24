@@ -18,13 +18,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4">
+    <nav className="bg-gray-900 text-white px-6 py-4 border-b border-gray-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
 
         {/* Logo */}
         <Link
           to="/"
-          className="text-2xl font-bold"
+          className="text-2xl font-bold hover:text-blue-400 transition"
         >
           JobConnect
         </Link>
@@ -32,6 +32,7 @@ const Navbar = () => {
         {/* Navigation */}
         <div className="flex gap-6 items-center">
 
+          {/* Common Links */}
           <Link
             to="/"
             className="hover:text-blue-400 transition"
@@ -46,7 +47,9 @@ const Navbar = () => {
             Jobs
           </Link>
 
-          {/* Student Links */}
+          {/* ==============================
+              Student Links
+          ============================== */}
           {user?.role === "student" && (
             <>
               <Link
@@ -72,7 +75,9 @@ const Navbar = () => {
             </>
           )}
 
-          {/* Recruiter Links */}
+          {/* ==============================
+              Recruiter Links
+          ============================== */}
           {user?.role === "recruiter" && (
             <>
               <Link
@@ -105,17 +110,21 @@ const Navbar = () => {
             </>
           )}
 
-          {/* Admin */}
+          {/* ==============================
+              Admin Links
+          ============================== */}
           {user?.role === "admin" && (
             <Link
               to="/admin/dashboard"
-              className="hover:text-blue-400 transition"
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
             >
               Admin Dashboard
             </Link>
           )}
 
-          {/* Auth */}
+          {/* ==============================
+              Authentication
+          ============================== */}
           {!user ? (
             <>
               <Link
@@ -127,7 +136,7 @@ const Navbar = () => {
 
               <Link
                 to="/register"
-                className="hover:text-blue-400 transition"
+                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
               >
                 Register
               </Link>
