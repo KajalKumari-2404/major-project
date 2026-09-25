@@ -1,91 +1,37 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "../pages/Home/Home";
 import Navbar from "../components/Navbar/Navbar";
 
+import Home from "../pages/Home/Home";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-
+import StudentDashboard from "../pages/student/StudentDashboard";
+import StudentProfile from "../pages/student/StudentProfile";
 import Jobs from "../pages/student/Jobs";
 import JobDetails from "../pages/student/JobDetails";
-import StudentDashboard from "../pages/student/StudentDashboard";
 import MyApplications from "../pages/student/MyApplications";
-import StudentProfile from "../pages/student/StudentProfile";
 import SavedJobs from "../pages/student/SavedJobs";
 
-import RecruiterDashboard from "../pages/recruiter/RecruiterDashboard";
-import RecruiterApplications from "../pages/recruiter/RecruiterApplications";
-import CreateJob from "../pages/recruiter/CreateJob";
-import MyJobs from "../pages/recruiter/MyJobs";
-import EditJob from "../pages/recruiter/EditJob";
-
-import AdminDashboard from "../pages/admin/AdminDashboard";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
+
+      {/* Navbar */}
       <Navbar />
 
       <Routes>
 
-        {/* ==============================
-            Home
-        ============================== */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute
-              allowedRoles={["student", "recruiter", "admin"]}
-            >
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
 
-        {/* ==============================
-            Authentication
-        ============================== */}
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+        <Route path="/register" element={<Register />} />
 
-        {/* ==============================
-            Jobs
-        ============================== */}
-        <Route
-          path="/jobs"
-          element={
-            <ProtectedRoute
-              allowedRoles={["student", "recruiter", "admin"]}
-            >
-              <Jobs />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/jobs/:id"
-          element={
-            <ProtectedRoute
-              allowedRoles={["student", "recruiter", "admin"]}
-            >
-              <JobDetails />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ==============================
-            Student Routes
-        ============================== */}
-
+        {/* Student Dashboard */}
         <Route
           path="/student/dashboard"
           element={
@@ -95,15 +41,7 @@ const AppRoutes = () => {
           }
         />
 
-        <Route
-          path="/student/applications"
-          element={
-            <ProtectedRoute allowedRoles={["student"]}>
-              <MyApplications />
-            </ProtectedRoute>
-          }
-        />
-
+        {/* Student Profile */}
         <Route
           path="/student/profile"
           element={
@@ -113,73 +51,42 @@ const AppRoutes = () => {
           }
         />
 
+        {/* Jobs */}
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <Jobs />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Job Details */}
+        <Route
+          path="/jobs/:id"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <JobDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* My Applications */}
+        <Route
+          path="/student/applications"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <MyApplications />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Saved Jobs */}
         <Route
           path="/student/saved-jobs"
           element={
             <ProtectedRoute allowedRoles={["student"]}>
               <SavedJobs />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ==============================
-            Recruiter Routes
-        ============================== */}
-
-        <Route
-          path="/recruiter/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["recruiter"]}>
-              <RecruiterDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/recruiter/applications"
-          element={
-            <ProtectedRoute allowedRoles={["recruiter"]}>
-              <RecruiterApplications />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/recruiter/jobs"
-          element={
-            <ProtectedRoute allowedRoles={["recruiter"]}>
-              <MyJobs />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/recruiter/jobs/create"
-          element={
-            <ProtectedRoute allowedRoles={["recruiter"]}>
-              <CreateJob />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/recruiter/jobs/edit/:id"
-          element={
-            <ProtectedRoute allowedRoles={["recruiter"]}>
-              <EditJob />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ==============================
-            Admin Routes
-        ============================== */}
-
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <AdminDashboard />
             </ProtectedRoute>
           }
         />

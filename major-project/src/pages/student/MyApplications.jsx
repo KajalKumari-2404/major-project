@@ -12,7 +12,7 @@ const MyApplications = () => {
 
       setApplications(response.data.applications);
     } catch (error) {
-      console.error("Applications error:", error);
+      console.error("My applications error:", error);
 
       setError(
         error.response?.data?.message ||
@@ -29,82 +29,115 @@ const MyApplications = () => {
 
   if (loading) {
     return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-semibold">
-          Loading applications...
-        </h2>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-xl font-semibold">
+            Loading applications...
+          </h2>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 text-center text-red-500">
-        {error}
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-red-500">{error}</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
 
         <h1 className="text-3xl font-bold mb-6">
           My Applications
         </h1>
 
         {applications.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-md p-8 text-center">
+            <h2 className="text-xl font-semibold mb-2">
+              No Applications Yet
+            </h2>
+
             <p className="text-gray-500">
               You have not applied for any jobs yet.
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {applications.map((application) => (
               <div
                 key={application._id}
                 className="bg-white rounded-xl shadow-md p-6"
               >
-                <h2 className="text-xl font-bold mb-2">
-                  {application.job?.title}
-                </h2>
+                <div className="flex justify-between items-start mb-4">
 
-                <p className="text-gray-600 mb-2">
-                  🏢 {application.job?.company}
-                </p>
+                  <div>
+                    <h2 className="text-xl font-bold">
+                      {application.job?.title}
+                    </h2>
 
-                <p className="text-gray-600 mb-2">
-                  📍 {application.job?.location}
-                </p>
+                    <p className="text-gray-600">
+                      {application.job?.company}
+                    </p>
+                  </div>
 
-                <p className="text-gray-600 mb-2">
-                  💼 {application.job?.employmentType}
-                </p>
-
-                <p className="text-gray-600 mb-4">
-                  💰 ₹{application.job?.salary}
-                </p>
-
-                <div className="border-t pt-4">
-
-                  <p className="font-semibold mb-2">
-                    Application Status
-                  </p>
-
-                  <span className="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      application.status === "Applied"
+                        ? "bg-blue-100 text-blue-700"
+                        : application.status === "Shortlisted"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : application.status === "Interview"
+                        ? "bg-purple-100 text-purple-700"
+                        : application.status === "Selected"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
                     {application.status}
                   </span>
 
                 </div>
 
-                <p className="text-gray-500 text-sm mt-4">
-                  Applied on:{" "}
-                  {new Date(
-                    application.createdAt
-                  ).toLocaleDateString()}
-                </p>
+                <div className="space-y-2 text-gray-600">
+
+                  <p>
+                    📍 {application.job?.location}
+                  </p>
+
+                  <p>
+                    💰 ₹{application.job?.salary}
+                  </p>
+
+                  <p>
+                    💼 {application.job?.employmentType}
+                  </p>
+
+                  <p>
+                    👤 Recruiter:{" "}
+                    {application.recruiter?.name}
+                  </p>
+
+                  <p>
+                    📧 {application.recruiter?.email}
+                  </p>
+
+                </div>
+
+                <div className="mt-5 pt-4 border-t">
+                  <p className="text-sm text-gray-500">
+                    Applied on:{" "}
+                    {new Date(
+                      application.createdAt
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
 
               </div>
             ))}
@@ -116,6 +149,5 @@ const MyApplications = () => {
     </div>
   );
 };
-
 
 export default MyApplications;
