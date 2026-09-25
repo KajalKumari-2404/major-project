@@ -30,20 +30,22 @@ const RecruiterDashboard = () => {
     fetchApplications();
   }, []);
 
+  // Dashboard Statistics
   const totalApplications = applications.length;
 
   const shortlistedApplications = applications.filter(
-    (application) => application.status === "shortlisted"
+    (application) => application.status === "Shortlisted"
   ).length;
 
   const interviewApplications = applications.filter(
-    (application) => application.status === "interview"
+    (application) => application.status === "Interview"
   ).length;
 
   const selectedApplications = applications.filter(
-    (application) => application.status === "selected"
+    (application) => application.status === "Selected"
   ).length;
 
+  // Loading State
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
@@ -58,6 +60,7 @@ const RecruiterDashboard = () => {
     );
   }
 
+  // Error State
   if (error) {
     return (
       <div className="min-h-screen bg-slate-950 text-white px-6 py-12">
@@ -103,6 +106,7 @@ const RecruiterDashboard = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
 
+          {/* Total Applications */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
             <p className="text-gray-400 text-sm">
               Applications
@@ -117,6 +121,7 @@ const RecruiterDashboard = () => {
             </p>
           </div>
 
+          {/* Shortlisted */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
             <p className="text-gray-400 text-sm">
               Shortlisted
@@ -131,6 +136,7 @@ const RecruiterDashboard = () => {
             </p>
           </div>
 
+          {/* Interviews */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
             <p className="text-gray-400 text-sm">
               Interviews
@@ -145,6 +151,7 @@ const RecruiterDashboard = () => {
             </p>
           </div>
 
+          {/* Selected */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
             <p className="text-gray-400 text-sm">
               Selected
@@ -232,6 +239,5 @@ const RecruiterDashboard = () => {
     </div>
   );
 };
-
 
 export default RecruiterDashboard;
