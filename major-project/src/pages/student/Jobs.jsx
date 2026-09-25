@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
@@ -6,6 +7,9 @@ const Jobs = () => {
   const navigate = useNavigate();
 
   const [jobs, setJobs] = useState([]);
+  const [savedJobIds, setSavedJobIds] = useState([]);
+  const [savingJobId, setSavingJobId] = useState(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [employmentFilter, setEmploymentFilter] = useState("");
@@ -14,6 +18,7 @@ const Jobs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Fetch all jobs
   const fetchJobs = async () => {
     try {
       setLoading(true);
@@ -33,41 +38,89 @@ const Jobs = () => {
     }
   };
 
+  // Fetch saved jobs
+  const fetchSavedJobs = async () => {
+    try {
+      const response = await api.get("/saved-jobs");
+
+      const savedIds = (response.data.savedJobs || []).map(
+        (savedJob) => savedJob.job?._id || savedJob.job
+      );
+
+      setSavedJobIds(savedIds);
+    } catch (error) {
+      console.error("Saved jobs error:", error);
+    }
+  };
+
+  // Save / Unsave job
+  const handleSaveJob = async (jobId) => {
+    try {
+      setSavingJobId(jobId);
+
+      const isSaved = savedJobIds.includes(jobId);
+
+      if (isSaved) {
+        await api.delete(`/saved-jobs/${jobId}`);
+
+        setSavedJobIds((prev) =>
+          prev.filter((id) => id !== jobId)
+        );
+      } else {
+        await api.post(`/saved-jobs/${jobId}`);
+
+        setSavedJobIds((prev) => [...prev, jobId]);
+      }
+    } catch (error) {
+      console.error("Save job error:", error);
+
+      alert(
+        error.response?.data?.message || "Failed to save job"
+      );
+    } finally {
+      setSavingJobId(null);
+    }
+  };
+
   useEffect(() => {
     fetchJobs();
+    fetchSavedJobs();
   }, []);
 
-  
-  // Search + Filters
+  // Filter jobs
   const filteredJobs = jobs.filter((job) => {
-    const search = searchTerm.toLowerCase().trim();
+    const search = searchTerm.toLowerCase();
 
     const matchesSearch =
-      !search ||
       job.title?.toLowerCase().includes(search) ||
-      job.company?.toLowerCase().includes(search) ||
-      job.location?.toLowerCase().includes(search) ||
+      job.description?.toLowerCase().includes(search) ||
       job.skills?.some((skill) =>
         skill.toLowerCase().includes(search)
       );
 
     const matchesLocation =
       !locationFilter ||
-      job.location?.toLowerCase() ===
-        locationFilter.toLowerCase();
+      job.location?.toLowerCase() === locationFilter.toLowerCase();
 
     const matchesEmployment =
       !employmentFilter ||
-      job.employmentType === employmentFilter;
+      job.employmentType?.toLowerCase() ===
+        employmentFilter.toLowerCase();
 
-    const matchesSalary =
-      !salaryFilter ||
-      (salaryFilter === "below5" && Number(job.salary) < 500000) ||
-      (salaryFilter === "5to10" &&
-        Number(job.salary) >= 500000 &&
-        Number(job.salary) <= 1000000) ||
-      (salaryFilter === "above10" &&
-        Number(job.salary) > 1000000);
+    let matchesSalary = true;
+
+    if (salaryFilter === "below5") {
+      matchesSalary = job.salary < 500000;
+    }
+
+    if (salaryFilter === "5to10") {
+      matchesSalary =
+        job.salary >= 500000 && job.salary <= 1000000;
+    }
+
+    if (salaryFilter === "above10") {
+      matchesSalary = job.salary > 1000000;
+    }
 
     return (
       matchesSearch &&
@@ -86,247 +139,225 @@ const Jobs = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-slate-700 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-
-          <p className="text-gray-400">
-            Loading jobs...
-          </p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg">Loading jobs...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white px-6 py-12">
-        <div className="max-w-3xl mx-auto bg-red-950/30 border border-red-900 rounded-xl p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-400 mb-2">
-            Something went wrong
-          </h2>
-
-          <p className="text-gray-400">
-            {error}
-          </p>
-
-          <button
-            onClick={fetchJobs}
-            className="mt-5 bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-medium transition"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white px-6 py-10">
+    <div className="min-h-screen bg-gray-50 px-6 py-10">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <h1 className="text-4xl font-bold text-gray-800">
+          Find Your Next Job
+        </h1>
+
+        <p className="text-gray-600 mt-2">
+          Explore the latest opportunities and find a role that
+          matches your skills.
+        </p>
+      </div>
+
       <div className="max-w-7xl mx-auto">
-
-        {/* Header */}
-        <div className="mb-8">
-          <p className="text-blue-500 font-medium mb-2">
-            JobConnect Opportunities
-          </p>
-
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        {/* Search and Filters */}
+        <div className="bg-white p-5 rounded-xl shadow mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search */}
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">
-                Find Your Next Job
-              </h1>
+              <label className="block text-sm font-medium mb-2">
+                Search
+              </label>
 
-              <p className="text-gray-400 mt-3">
-                Explore the latest opportunities and find a role
-                that matches your skills.
-              </p>
+              <input
+                type="text"
+                placeholder="Search jobs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2"
+              />
             </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-3">
-              <span className="text-gray-400 text-sm">
-                Available Jobs
-              </span>
-
-              <p className="text-xl font-bold text-white">
-                {filteredJobs.length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="mb-5">
-          <div className="relative max-w-3xl">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-              🔍
-            </span>
-
-            <input
-              type="text"
-              placeholder="Search jobs by title, company, location or skill..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 outline-none focus:border-blue-600 transition"
-            />
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
             {/* Location */}
-            <select
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-600"
-            >
-              <option value="">All Locations</option>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Location
+              </label>
 
-              {[...new Set(jobs.map((job) => job.location))]
-                .filter(Boolean)
-                .map((location) => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-            </select>
+              <select
+                value={locationFilter}
+                onChange={(e) =>
+                  setLocationFilter(e.target.value)
+                }
+                className="w-full border rounded-lg px-4 py-2"
+              >
+                <option value="">All Locations</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Bhopal">Bhopal</option>
+              </select>
+            </div>
 
-            {/* Employment Type */}
-            <select
-              value={employmentFilter}
-              onChange={(e) =>
-                setEmploymentFilter(e.target.value)
-              }
-              className="bg-slate-950 border border-slate-800 text-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-600"
-            >
-              <option value="">All Employment Types</option>
-              <option value="Full-time">Full-time</option>
-              <option value="Part-time">Part-time</option>
-              <option value="internship">Internship</option>
-              <option value="contract">Contract</option>
-            </select>
+            {/* Employment */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Employment Type
+              </label>
+
+              <select
+                value={employmentFilter}
+                onChange={(e) =>
+                  setEmploymentFilter(e.target.value)
+                }
+                className="w-full border rounded-lg px-4 py-2"
+              >
+                <option value="">All Employment Types</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
 
             {/* Salary */}
-            <select
-              value={salaryFilter}
-              onChange={(e) => setSalaryFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-gray-300 rounded-lg px-4 py-3 outline-none focus:border-blue-600"
-            >
-              <option value="">All Salaries</option>
-              <option value="below5">Below ₹5 Lakh</option>
-              <option value="5to10">₹5 - ₹10 Lakh</option>
-              <option value="above10">Above ₹10 Lakh</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Salary
+              </label>
 
-            {/* Clear */}
-            <button
-              onClick={clearFilters}
-              className="bg-slate-800 hover:bg-slate-700 text-white rounded-lg px-4 py-3 font-medium transition"
-            >
-              Clear Filters
-            </button>
-
+              <select
+                value={salaryFilter}
+                onChange={(e) =>
+                  setSalaryFilter(e.target.value)
+                }
+                className="w-full border rounded-lg px-4 py-2"
+              >
+                <option value="">All Salaries</option>
+                <option value="below5">Below ₹5 Lakh</option>
+                <option value="5to10">₹5 - ₹10 Lakh</option>
+                <option value="above10">Above ₹10 Lakh</option>
+              </select>
+            </div>
           </div>
+
+          <button
+            onClick={clearFilters}
+            className="mt-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+          >
+            Clear Filters
+          </button>
+        </div>
+
+        {/* Available Jobs */}
+        <div className="mb-5">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Available Jobs
+          </h2>
+
+          <p className="text-gray-500">
+            {filteredJobs.length} jobs found
+          </p>
         </div>
 
         {/* Jobs */}
         {filteredJobs.length === 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-10 text-center">
-            <div className="text-4xl mb-4">
-              🔍
-            </div>
-
-            <h2 className="text-xl font-semibold mb-2">
-              No matching jobs found
-            </h2>
-
-            <p className="text-gray-400 mb-5">
-              Try changing your search or filters.
+          <div className="bg-white rounded-xl shadow p-10 text-center">
+            <p className="text-gray-500">
+              No jobs found.
             </p>
-
-            <button
-              onClick={clearFilters}
-              className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg font-medium transition"
-            >
-              Clear Filters
-            </button>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredJobs.map((job) => {
+              const isSaved = savedJobIds.includes(job._id);
+              const isSaving = savingJobId === job._id;
 
-            {filteredJobs.map((job) => (
-              <div
-                key={job._id}
-                className="group bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-blue-900 hover:-translate-y-1 transition duration-300"
-              >
-
-                {/* Job Header */}
-                <div className="flex items-start justify-between gap-4 mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-blue-950/60 border border-blue-900 flex items-center justify-center text-xl">
-                    💼
-                  </div>
-
-                  <span className="text-xs font-medium bg-slate-800 text-gray-300 px-3 py-1 rounded-full">
+              return (
+                <div
+                  key={job._id}
+                  className="bg-white rounded-xl shadow p-6"
+                >
+                  {/* Job Type */}
+                  <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-3">
                     {job.employmentType}
                   </span>
-                </div>
 
-                {/* Title */}
-                <h2 className="text-xl font-bold text-white group-hover:text-blue-500 transition">
-                  {job.title}
-                </h2>
+                  {/* Job Title */}
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    {job.title}
+                  </h3>
 
-                {/* Company */}
-                <p className="text-gray-400 mt-2">
-                  🏢 {job.company}
-                </p>
+                  {/* Company */}
+                  <p className="text-gray-600 mt-2">
+                    🏢 {job.companyName || "Company"}
+                  </p>
 
-                {/* Info */}
-                <div className="mt-5 space-y-3 text-sm">
-                  <p className="text-gray-400">
+                  {/* Location */}
+                  <p className="text-gray-600 mt-1">
                     📍 {job.location}
                   </p>
 
-                  <p className="text-gray-400">
+                  {/* Salary */}
+                  <p className="text-gray-600 mt-1">
                     💰 ₹{job.salary}
                   </p>
-                </div>
 
-                {/* Description */}
-                <p className="text-gray-400 text-sm leading-relaxed mt-5 line-clamp-3">
-                  {job.description}
-                </p>
+                  {/* Description */}
+                  <p className="text-gray-600 mt-4 line-clamp-3">
+                    {job.description}
+                  </p>
 
-                {/* Skills */}
-                {job.skills?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-5">
-                    {job.skills.map((skill, index) => (
+                  {/* Skills */}
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {job.skills?.map((skill, index) => (
                       <span
                         key={index}
-                        className="bg-blue-950/50 border border-blue-900 text-blue-400 px-3 py-1 rounded-full text-xs font-medium"
+                        className="bg-gray-100 px-3 py-1 rounded-full text-sm"
                       >
                         {skill}
                       </span>
                     ))}
                   </div>
-                )}
 
-                {/* Details */}
-                <button
-                  onClick={() => navigate(`/jobs/${job._id}`)}
-                  className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition"
-                >
-                  View Job Details
-                </button>
+                  {/* Buttons */}
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={() =>
+                        navigate(`/jobs/${job._id}`)
+                      }
+                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    >
+                      View Job Details
+                    </button>
 
-              </div>
-            ))}
-
+                    <button
+                      onClick={() => handleSaveJob(job._id)}
+                      disabled={isSaving}
+                      className={`px-4 py-2 rounded-lg border ${
+                        isSaved
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                          : "bg-white text-gray-700 border-gray-300"
+                      }`}
+                    >
+                      {isSaving
+                        ? "Saving..."
+                        : isSaved
+                        ? "★ Saved"
+                        : "☆ Save"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
-
       </div>
     </div>
   );

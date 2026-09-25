@@ -13,6 +13,7 @@ import JobDetails from "../pages/student/JobDetails";
 import StudentDashboard from "../pages/student/StudentDashboard";
 import MyApplications from "../pages/student/MyApplications";
 import StudentProfile from "../pages/student/StudentProfile";
+import SavedJobs from "../pages/student/SavedJobs";
 
 import RecruiterDashboard from "../pages/recruiter/RecruiterDashboard";
 import RecruiterApplications from "../pages/recruiter/RecruiterApplications";
@@ -46,9 +47,15 @@ const AppRoutes = () => {
         {/* ==============================
             Authentication
         ============================== */}
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
         {/* ==============================
             Jobs
@@ -102,6 +109,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={["student"]}>
               <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/saved-jobs"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <SavedJobs />
             </ProtectedRoute>
           }
         />
