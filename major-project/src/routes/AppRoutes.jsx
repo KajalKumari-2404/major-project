@@ -13,6 +13,8 @@ import JobDetails from "../pages/student/JobDetails";
 import MyApplications from "../pages/student/MyApplications";
 import SavedJobs from "../pages/student/SavedJobs";
 
+import RecruiterApplications from "../pages/recruiter/RecruiterApplications";
+
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 const AppRoutes = () => {
@@ -87,6 +89,16 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={["student"]}>
               <SavedJobs />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Recruiter Applications */}
+        <Route
+          path="/recruiter/applications"
+          element={
+            <ProtectedRoute allowedRoles={["recruiter"]}>
+              <RecruiterApplications />
             </ProtectedRoute>
           }
         />
