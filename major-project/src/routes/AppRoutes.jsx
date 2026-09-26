@@ -41,7 +41,7 @@ const AppRoutes = () => {
               <StudentDashboard />
             </ProtectedRoute>
           }
-        />
+      />
 
         {/* Student Profile */}
         <Route

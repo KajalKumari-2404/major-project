@@ -41,6 +41,7 @@ const SavedJobs = () => {
           return id !== jobId;
         })
       );
+      
     } catch (error) {
       console.error("Unsave job error:", error);
 
