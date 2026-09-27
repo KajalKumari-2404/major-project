@@ -19,6 +19,7 @@ const savedJobSchema = new mongoose.Schema(
   }
 );
 
+
 // Same user same job ko multiple times save nahi kar sakta
 savedJobSchema.index(
   { user: 1, job: 1 },
