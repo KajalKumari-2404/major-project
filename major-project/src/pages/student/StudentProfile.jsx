@@ -61,7 +61,6 @@ const StudentProfile = () => {
 
     fetchProfile();
   }, []);
-  
 
   // =============================
   // Handle Input
