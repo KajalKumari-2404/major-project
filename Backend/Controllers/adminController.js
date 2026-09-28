@@ -22,7 +22,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-
 // Get all jobs
 const getAllJobs = async (req, res) => {
   try {

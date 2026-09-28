@@ -24,7 +24,6 @@ const applyForJob = async (req, res) => {
       job: jobId,
       student: req.user.id,
     });
-    
 
     if (existingApplication) {
       return res.status(409).json({
