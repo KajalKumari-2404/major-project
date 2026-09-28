@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axios";
 
+
 const JobDetails = () => {
   const { id } = useParams();
 
