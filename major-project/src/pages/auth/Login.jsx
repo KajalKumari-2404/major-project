@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
@@ -18,13 +19,22 @@ function Login() {
         email,
         password,
       });
-      
 
       console.log("Login response:", response.data);
 
-      await getProfile();
+      const user = await getProfile();
 
-      navigate("/");
+      console.log("Logged in user:", user);
+
+      if (user?.role === "recruiter") {
+        navigate("/recruiter/dashboard");
+      } else if (user?.role === "student") {
+        navigate("/student/dashboard");
+      } else if (user?.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error(
         "Login error:",

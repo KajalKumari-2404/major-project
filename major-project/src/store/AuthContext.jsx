@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/axios";
 
@@ -14,6 +15,9 @@ export const AuthProvider = ({ children }) => {
       console.log("Logged in user:", response.data.user);
 
       setUser(response.data.user);
+
+      // Return user so Login.jsx can check the role
+      return response.data.user;
     } catch (error) {
       console.error(
         "Get profile error:",
@@ -21,6 +25,8 @@ export const AuthProvider = ({ children }) => {
       );
 
       setUser(null);
+
+      return null;
     } finally {
       setLoading(false);
     }
@@ -29,7 +35,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     getProfile();
   }, []);
-  
 
   return (
     <AuthContext.Provider
