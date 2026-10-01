@@ -159,9 +159,61 @@ const updateApplicationStatus = async (req, res) => {
   }
 };
 
+// Schedule interview by recruiter
+const scheduleInterview = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { date, time, mode, link, notes } = req.body;
+
+    if (!date || !time || !mode) {
+      return res.status(400).json({
+        message: "Date, time and mode are required",
+      });
+    }
+
+    const application = await Application.findOne({
+      _id: applicationId,
+      recruiter: req.user.id,
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
+    }
+
+    application.interview = {
+      date,
+      time,
+      mode,
+      link: link || "",
+      notes: notes || "",
+    };
+
+    application.status = "Interview";
+
+    await application.save();
+
+    res.status(200).json({
+      message: "Interview scheduled successfully",
+      application,
+    });
+  } catch (error) {
+    console.error(
+      "Schedule interview error:",
+      error.message
+    );
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   applyForJob,
   getMyApplications,
   getRecruiterApplications,
   updateApplicationStatus,
+  scheduleInterview,
 };

@@ -31,6 +31,34 @@ const applicationSchema = new mongoose.Schema(
       ],
       default: "Applied",
     },
+
+    // Interview details
+    interview: {
+      date: {
+        type: String,
+        default: "",
+      },
+
+      time: {
+        type: String,
+        default: "",
+      },
+
+      mode: {
+        type: String,
+        default: "",
+      },
+
+      link: {
+        type: String,
+        default: "",
+      },
+
+      notes: {
+        type: String,
+        default: "",
+      },
+    },
   },
   {
     timestamps: true,
@@ -46,6 +74,5 @@ const Application = mongoose.model(
   "Application",
   applicationSchema
 );
-
 
 module.exports = Application;

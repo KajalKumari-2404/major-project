@@ -9,8 +9,19 @@ const RecruiterApplications = () => {
 
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [schedulingId, setSchedulingId] = useState(null);
+
+  const [scheduleApplication, setScheduleApplication] = useState(null);
+
+  const [scheduleData, setScheduleData] = useState({
+    date: "",
+    time: "",
+    mode: "Online",
+    link: "",
+    notes: "",
+  });
+
   const [error, setError] = useState("");
-  
 
   const filters = [
     "All",
@@ -20,7 +31,7 @@ const RecruiterApplications = () => {
     "Rejected",
   ];
 
-  // Fetch applications
+  // Fetch recruiter applications
   const fetchApplications = async () => {
     try {
       setLoading(true);
@@ -93,7 +104,88 @@ const RecruiterApplications = () => {
     }
   };
 
-  // Status badge
+  // Open schedule interview form
+  const openScheduleForm = (application) => {
+    setScheduleApplication(application);
+
+    setScheduleData({
+      date: application.interview?.date || "",
+      time: application.interview?.time || "",
+      mode: application.interview?.mode || "Online",
+      link: application.interview?.link || "",
+      notes: application.interview?.notes || "",
+    });
+
+    setError("");
+  };
+
+  // Schedule interview
+  const scheduleInterview = async () => {
+    if (!scheduleApplication) return;
+
+    if (
+      !scheduleData.date ||
+      !scheduleData.time ||
+      !scheduleData.mode
+    ) {
+      setError("Date, time and mode are required.");
+      return;
+    }
+
+    try {
+      setSchedulingId(scheduleApplication._id);
+      setError("");
+
+      const response = await api.put(
+        `/applications/${scheduleApplication._id}/interview`,
+        scheduleData
+      );
+
+      const updatedApplication = response.data.application;
+
+      /*
+        Important:
+        Backend response contains only IDs for job/student.
+        Existing application has populated job/student data.
+
+        So we keep the old job and student objects
+        and only update interview/status data.
+      */
+      setApplications((prevApplications) =>
+        prevApplications.map((application) =>
+          application._id === scheduleApplication._id
+            ? {
+                ...application,
+                ...updatedApplication,
+                job: application.job,
+                student: application.student,
+              }
+            : application
+        )
+      );
+
+      setScheduleApplication(null);
+
+      setScheduleData({
+        date: "",
+        time: "",
+        mode: "Online",
+        link: "",
+        notes: "",
+      });
+    } catch (error) {
+      console.error("Schedule interview error:", error);
+
+      setError(
+        error.response?.data?.message ||
+          "Failed to schedule interview."
+      );
+    } finally {
+      setSchedulingId(null);
+    }
+  };
+
+  // Status badge classes
   const getStatusClass = (status) => {
     switch (status) {
       case "Applied":
@@ -184,19 +276,23 @@ const RecruiterApplications = () => {
         {/* Applications */}
         {!loading && filteredApplications.length > 0 && (
           <div className="space-y-5">
+
             {filteredApplications.map((application) => (
               <div
                 key={application._id}
                 className="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-gray-700 transition"
               >
+
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
 
                   {/* Applicant Information */}
                   <div className="flex-1">
 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+
                       <h2 className="text-xl font-semibold">
-                        {application.student?.name || "Unknown Applicant"}
+                        {application.student?.name ||
+                          "Unknown Applicant"}
                       </h2>
 
                       <span
@@ -206,6 +302,7 @@ const RecruiterApplications = () => {
                       >
                         {application.status}
                       </span>
+
                     </div>
 
                     <div className="space-y-2 text-sm">
@@ -245,12 +342,70 @@ const RecruiterApplications = () => {
                         ).toLocaleDateString()}
                       </p>
 
+                      {/* Interview Details */}
+                      {application.interview?.date && (
+                        <div className="mt-4 p-4 bg-purple-500/5 border border-purple-500/20 rounded-xl">
+
+                          <p className="text-purple-400 font-medium mb-2">
+                            Interview Scheduled
+                          </p>
+
+                          <p className="text-gray-300">
+                            <span className="text-gray-500">
+                              Date:
+                            </span>{" "}
+                            {application.interview.date}
+                          </p>
+
+                          <p className="text-gray-300">
+                            <span className="text-gray-500">
+                              Time:
+                            </span>{" "}
+                            {application.interview.time}
+                          </p>
+
+                          <p className="text-gray-300">
+                            <span className="text-gray-500">
+                              Mode:
+                            </span>{" "}
+                            {application.interview.mode}
+                          </p>
+
+                          {application.interview.link && (
+                            <p className="text-gray-300">
+                              <span className="text-gray-500">
+                                Link:
+                              </span>{" "}
+                              <a
+                                href={application.interview.link}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-blue-400 hover:underline"
+                              >
+                                Join Interview
+                              </a>
+                            </p>
+                          )}
+
+                          {application.interview.notes && (
+                            <p className="text-gray-300">
+                              <span className="text-gray-500">
+                                Notes:
+                              </span>{" "}
+                              {application.interview.notes}
+                            </p>
+                          )}
+
+                        </div>
+                      )}
+
                     </div>
                   </div>
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-3 lg:max-w-md lg:justify-end">
 
+                    {/* Shortlist */}
                     <button
                       onClick={() =>
                         updateStatus(
@@ -258,12 +413,15 @@ const RecruiterApplications = () => {
                           "Shortlisted"
                         )
                       }
-                      disabled={updatingId === application._id}
+                      disabled={
+                        updatingId === application._id
+                      }
                       className="px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50 transition"
                     >
                       Shortlist
                     </button>
 
+                    {/* Interview Status */}
                     <button
                       onClick={() =>
                         updateStatus(
@@ -271,12 +429,28 @@ const RecruiterApplications = () => {
                           "Interview"
                         )
                       }
-                      disabled={updatingId === application._id}
+                      disabled={
+                        updatingId === application._id
+                      }
                       className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-50 transition"
                     >
                       Interview
                     </button>
 
+                    {/* Schedule Interview */}
+                    <button
+                      onClick={() =>
+                        openScheduleForm(application)
+                      }
+                      disabled={
+                        schedulingId === application._id
+                      }
+                      className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition"
+                    >
+                      Schedule Interview
+                    </button>
+
+                    {/* Select */}
                     <button
                       onClick={() =>
                         updateStatus(
@@ -284,12 +458,15 @@ const RecruiterApplications = () => {
                           "Selected"
                         )
                       }
-                      disabled={updatingId === application._id}
+                      disabled={
+                        updatingId === application._id
+                      }
                       className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 disabled:opacity-50 transition"
                     >
                       Select
                     </button>
 
+                    {/* Reject */}
                     <button
                       onClick={() =>
                         updateStatus(
@@ -297,7 +474,9 @@ const RecruiterApplications = () => {
                           "Rejected"
                         )
                       }
-                      disabled={updatingId === application._id}
+                      disabled={
+                        updatingId === application._id
+                      }
                       className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-50 transition"
                     >
                       Reject
@@ -312,10 +491,183 @@ const RecruiterApplications = () => {
                     Updating application status...
                   </p>
                 )}
+
               </div>
             ))}
+
           </div>
         )}
+
+        {/* Schedule Interview Modal */}
+        {scheduleApplication && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center px-4 z-50">
+
+            <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl p-6">
+
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+
+                <div>
+                  <h2 className="text-2xl font-bold">
+                    Schedule Interview
+                  </h2>
+
+                  <p className="text-gray-400 mt-1">
+                    {scheduleApplication.student?.name ||
+                      "Applicant"}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() =>
+                    setScheduleApplication(null)
+                  }
+                  className="text-gray-400 hover:text-white text-xl"
+                >
+                  ✕
+                </button>
+
+              </div>
+
+              <div className="space-y-4">
+
+                {/* Date */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Interview Date
+                  </label>
+
+                  <input
+                    type="date"
+                    value={scheduleData.date}
+                    onChange={(e) =>
+                      setScheduleData({
+                        ...scheduleData,
+                        date: e.target.value,
+                      })
+                    }
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white"
+                  />
+                </div>
+
+                {/* Time */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Interview Time
+                  </label>
+
+                  <input
+                    type="time"
+                    value={scheduleData.time}
+                    onChange={(e) =>
+                      setScheduleData({
+                        ...scheduleData,
+                        time: e.target.value,
+                      })
+                    }
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white"
+                  />
+                </div>
+
+                {/* Mode */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Interview Mode
+                  </label>
+
+                  <select
+                    value={scheduleData.mode}
+                    onChange={(e) =>
+                      setScheduleData({
+                        ...scheduleData,
+                        mode: e.target.value,
+                      })
+                    }
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white"
+                  >
+                    <option value="Online">
+                      Online
+                    </option>
+
+                    <option value="Offline">
+                      Offline
+                    </option>
+                  </select>
+                </div>
+
+                {/* Link */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Meeting Link
+                  </label>
+
+                  <input
+                    type="text"
+                    placeholder="https://meet.google.com/..."
+                    value={scheduleData.link}
+                    onChange={(e) =>
+                      setScheduleData({
+                        ...scheduleData,
+                        link: e.target.value,
+                      })
+                    }
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white"
+                  />
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    Notes
+                  </label>
+
+                  <textarea
+                    rows="3"
+                    placeholder="Technical interview round"
+                    value={scheduleData.notes}
+                    onChange={(e) =>
+                      setScheduleData({
+                        ...scheduleData,
+                        notes: e.target.value,
+                      })
+                    }
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white resize-none"
+                  />
+                </div>
+
+                {/* Buttons */}
+                <div className="flex gap-3 pt-2">
+
+                  <button
+                    onClick={() =>
+                      setScheduleApplication(null)
+                    }
+                    className="flex-1 px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={scheduleInterview}
+                    disabled={
+                      schedulingId ===
+                      scheduleApplication._id
+                    }
+                    className="flex-1 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition"
+                  >
+                    {schedulingId ===
+                    scheduleApplication._id
+                      ? "Scheduling..."
+                      : "Schedule Interview"}
+                  </button>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

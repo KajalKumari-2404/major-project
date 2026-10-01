@@ -5,6 +5,7 @@ const {
   getMyApplications,
   getRecruiterApplications,
   updateApplicationStatus,
+  scheduleInterview,
 } = require("../Controllers/applicationController");
 
 const authMiddleware = require("../Middleware/authMiddleware");
@@ -43,6 +44,15 @@ router.put(
   authMiddleware,
   roleMiddleware("recruiter"),
   updateApplicationStatus
+);
+
+// Schedule interview by recruiter
+
+router.put(
+  "/:applicationId/interview",
+  authMiddleware,
+  roleMiddleware("recruiter"),
+  scheduleInterview
 );
 
 module.exports = router;
