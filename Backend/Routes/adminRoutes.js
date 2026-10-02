@@ -20,7 +20,6 @@ router.get(
   getAllUsers
 );
 
-
 // Get all jobs
 router.get(
   "/jobs",

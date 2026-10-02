@@ -9,13 +9,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 
-// router.get("/profile", authMiddleware, (req, res) => {
-//   res.status(200).json({
-//     message: "Profile accessed successfully",
-//     user: req.user,
-//   });
-// });
-
 router.get("/profile", authMiddleware, getProfile);
 router.put("/profile", authMiddleware, updateProfile);
 router.put("/change-password", authMiddleware, changePassword);
@@ -31,5 +24,6 @@ router.get(
     });
   }
 );
+
 
 module.exports = router;

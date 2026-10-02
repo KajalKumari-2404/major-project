@@ -37,7 +37,6 @@ router.get(
   getRecruiterApplications
 );
 
-
 // Update application status by recruiter
 router.put(
   "/:applicationId/status",
