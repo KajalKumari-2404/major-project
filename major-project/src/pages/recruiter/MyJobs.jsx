@@ -7,7 +7,6 @@ const MyJobs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [closingJobId, setClosingJobId] = useState(null);
-  
 
   const fetchMyJobs = async () => {
     try {
