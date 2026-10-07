@@ -29,7 +29,7 @@ const RecruiterDashboard = () => {
   useEffect(() => {
     fetchApplications();
   }, []);
-  
+
 
   // Dashboard Statistics
   const totalApplications = applications.length;

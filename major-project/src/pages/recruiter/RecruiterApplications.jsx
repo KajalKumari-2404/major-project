@@ -30,7 +30,6 @@ const RecruiterApplications = () => {
     "Interview",
     "Rejected",
   ];
-  
 
   // Fetch recruiter applications
   const fetchApplications = async () => {
