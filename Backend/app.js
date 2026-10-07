@@ -8,6 +8,7 @@ const jobRoutes = require("./Routes/jobRoutes");
 const applicationRoutes = require("./Routes/applicationRoutes");
 const adminRoutes = require("./Routes/adminRoutes");
 const savedJobRoutes = require("./Routes/savedJobRoutes");
+const notificationRoutes = require("./Routes/notificationRoutes");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/saved-jobs", savedJobRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
 // Test route
 app.get("/", (req, res) => {

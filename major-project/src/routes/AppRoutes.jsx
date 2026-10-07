@@ -19,6 +19,7 @@ import MyJobs from "../pages/recruiter/MyJobs";
 import EditJob from "../pages/recruiter/EditJob";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import Resume from "../pages/student/Resume";
+import Notifications from "../pages/student/Notifications";
 
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
@@ -70,6 +71,15 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
         />
+
+        <Route
+  path="/student/notifications"
+  element={
+    <ProtectedRoute allowedRoles={["student"]}>
+      <Notifications />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Jobs */}
         <Route

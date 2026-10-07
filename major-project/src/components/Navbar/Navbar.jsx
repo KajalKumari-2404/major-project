@@ -80,6 +80,13 @@ const Navbar = () => {
                 Resume
                 </Link>
 
+                <Link
+                to="/student/notifications"
+                className="hover:text-blue-400 transition"
+                >
+                  Notifications
+                  </Link>
+
               <Link
                 to="/student/profile"
                 className="hover:text-blue-400 transition"

@@ -1,5 +1,6 @@
 const Application = require("../Models/Application");
 const Job = require("../Models/Job");
+const Notification = require("../Models/Notification");
 
 // Apply for a job
 const applyForJob = async (req, res) => {
@@ -143,6 +144,18 @@ const updateApplicationStatus = async (req, res) => {
 
     await application.save();
 
+    // Create notification for student
+await Notification.create({
+  user: application.student,
+  message: `Your application status has been updated to ${status}`,
+  type:
+    status === "Selected"
+      ? "Selected"
+      : status === "Rejected"
+      ? "Rejected"
+      : "Application",
+});
+
     res.status(200).json({
       message: "Application status updated successfully",
       application,
@@ -193,6 +206,13 @@ const scheduleInterview = async (req, res) => {
     application.status = "Interview";
 
     await application.save();
+
+    // Create interview notification for student
+await Notification.create({
+  user: application.student,
+  message: `Your interview has been scheduled for ${date} at ${time}`,
+  type: "Interview",
+});
 
     res.status(200).json({
       message: "Interview scheduled successfully",
