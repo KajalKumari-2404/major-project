@@ -74,6 +74,13 @@ const Navbar = () => {
               </Link>
 
               <Link
+              to="/student/resume"
+              className="hover:text-blue-400 transition"
+              >
+                Resume
+                </Link>
+
+              <Link
                 to="/student/profile"
                 className="hover:text-blue-400 transition"
               >

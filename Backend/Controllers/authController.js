@@ -176,6 +176,7 @@ const getProfile = async (req, res) => {
         education: user.education,
         experience: user.experience,
         projects: user.projects,
+        achievements: user.achievements,
 
         github: user.github,
         linkedin: user.linkedin,
@@ -206,6 +207,7 @@ const updateProfile = async (req, res) => {
       education,
       experience,
       projects,
+      achievements,
       github,
       linkedin,
       portfolio,
@@ -242,6 +244,7 @@ const updateProfile = async (req, res) => {
         education: education || "",
         experience: experience || "",
         projects: projects || "",
+        achievements: achievements || "",
         github: github || "",
         linkedin: linkedin || "",
         portfolio: portfolio || "",
@@ -273,6 +276,7 @@ const updateProfile = async (req, res) => {
         education: updatedUser.education,
         experience: updatedUser.experience,
         projects: updatedUser.projects,
+        achievements: updatedUser.achievements,
 
         github: updatedUser.github,
         linkedin: updatedUser.linkedin,

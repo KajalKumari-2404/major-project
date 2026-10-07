@@ -17,6 +17,8 @@ import RecruiterDashboard from "../pages/recruiter/RecruiterDashboard";
 import RecruiterApplications from "../pages/recruiter/RecruiterApplications";
 import MyJobs from "../pages/recruiter/MyJobs";
 import EditJob from "../pages/recruiter/EditJob";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import Resume from "../pages/student/Resume";
 
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
@@ -58,6 +60,15 @@ const AppRoutes = () => {
               <StudentProfile />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+        path="/student/resume"
+        element={
+        <ProtectedRoute allowedRoles={["student"]}>
+          <Resume />
+          </ProtectedRoute>
+        }
         />
 
         {/* Jobs */}
@@ -142,6 +153,18 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* ================= ADMIN ROUTES ================= */}
+
+{/* Admin Dashboard */}
+<Route
+  path="/admin/dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
 
       </Routes>
     </BrowserRouter>

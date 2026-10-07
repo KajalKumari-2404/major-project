@@ -70,6 +70,12 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    achievements: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     github: {
       type: String,
       trim: true,
