@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
@@ -14,6 +13,10 @@ const Jobs = () => {
   const [locationFilter, setLocationFilter] = useState("");
   const [employmentFilter, setEmploymentFilter] = useState("");
   const [salaryFilter, setSalaryFilter] = useState("");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 4;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -130,11 +133,24 @@ const Jobs = () => {
     );
   });
 
+  // Pagination calculations
+  const totalPages = Math.ceil(
+    filteredJobs.length / jobsPerPage
+  );
+
+  const startIndex = (currentPage - 1) * jobsPerPage;
+
+  const paginatedJobs = filteredJobs.slice(
+    startIndex,
+    startIndex + jobsPerPage
+  );
+
   const clearFilters = () => {
     setSearchTerm("");
     setLocationFilter("");
     setEmploymentFilter("");
     setSalaryFilter("");
+    setCurrentPage(1);
   };
 
   if (loading) {
@@ -181,7 +197,10 @@ const Jobs = () => {
                 type="text"
                 placeholder="Search jobs..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full border rounded-lg px-4 py-2"
               />
             </div>
@@ -194,9 +213,10 @@ const Jobs = () => {
 
               <select
                 value={locationFilter}
-                onChange={(e) =>
-                  setLocationFilter(e.target.value)
-                }
+                onChange={(e) => {
+                  setLocationFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full border rounded-lg px-4 py-2"
               >
                 <option value="">All Locations</option>
@@ -213,9 +233,10 @@ const Jobs = () => {
 
               <select
                 value={employmentFilter}
-                onChange={(e) =>
-                  setEmploymentFilter(e.target.value)
-                }
+                onChange={(e) => {
+                  setEmploymentFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full border rounded-lg px-4 py-2"
               >
                 <option value="">All Employment Types</option>
@@ -234,9 +255,10 @@ const Jobs = () => {
 
               <select
                 value={salaryFilter}
-                onChange={(e) =>
-                  setSalaryFilter(e.target.value)
-                }
+                onChange={(e) => {
+                  setSalaryFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full border rounded-lg px-4 py-2"
               >
                 <option value="">All Salaries</option>
@@ -274,89 +296,142 @@ const Jobs = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredJobs.map((job) => {
-              const isSaved = savedJobIds.includes(job._id);
-              const isSaving = savingJobId === job._id;
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {paginatedJobs.map((job) => {
+                const isSaved = savedJobIds.includes(job._id);
+                const isSaving = savingJobId === job._id;
 
-              return (
-                <div
-                  key={job._id}
-                  className="bg-white rounded-xl shadow p-6"
-                >
-                  {/* Job Type */}
-                  <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-3">
-                    {job.employmentType}
-                  </span>
+                return (
+                  <div
+                    key={job._id}
+                    className="bg-white rounded-xl shadow p-6"
+                  >
+                    {/* Job Type */}
+                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mb-3">
+                      {job.employmentType}
+                    </span>
 
-                  {/* Job Title */}
-                  <h3 className="text-2xl font-bold text-gray-800">
-                    {job.title}
-                  </h3>
+                    {/* Job Title */}
+                    <h3 className="text-2xl font-bold text-gray-800">
+                      {job.title}
+                    </h3>
 
-                  {/* Company */}
-                  <p className="text-gray-600 mt-2">
-                    🏢 {job.companyName || "Company"}
-                  </p>
+                    {/* Company */}
+                    <p className="text-gray-600 mt-2">
+                      🏢 {job.companyName || "Company"}
+                    </p>
 
-                  {/* Location */}
-                  <p className="text-gray-600 mt-1">
-                    📍 {job.location}
-                  </p>
+                    {/* Location */}
+                    <p className="text-gray-600 mt-1">
+                      📍 {job.location}
+                    </p>
 
-                  {/* Salary */}
-                  <p className="text-gray-600 mt-1">
-                    💰 ₹{job.salary}
-                  </p>
+                    {/* Salary */}
+                    <p className="text-gray-600 mt-1">
+                      💰 ₹{job.salary}
+                    </p>
 
-                  {/* Description */}
-                  <p className="text-gray-600 mt-4 line-clamp-3">
-                    {job.description}
-                  </p>
+                    {/* Description */}
+                    <p className="text-gray-600 mt-4 line-clamp-3">
+                      {job.description}
+                    </p>
 
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {job.skills?.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+                    {/* Skills */}
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {job.skills?.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 mt-6">
+                      <button
+                        onClick={() =>
+                          navigate(`/jobs/${job._id}`)
+                        }
+                        className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                       >
-                        {skill}
-                      </span>
-                    ))}
+                        View Job Details
+                      </button>
+
+                      <button
+                        onClick={() => handleSaveJob(job._id)}
+                        disabled={isSaving}
+                        className={`px-4 py-2 rounded-lg border ${
+                          isSaved
+                            ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                            : "bg-white text-gray-700 border-gray-300"
+                        }`}
+                      >
+                        {isSaving
+                          ? "Saving..."
+                          : isSaved
+                          ? "★ Saved"
+                          : "☆ Save"}
+                      </button>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* Buttons */}
-                  <div className="flex gap-3 mt-6">
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {/* Previous */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.max(prev - 1, 1)
+                    )
+                  }
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg border bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => (
                     <button
+                      key={index + 1}
                       onClick={() =>
-                        navigate(`/jobs/${job._id}`)
+                        setCurrentPage(index + 1)
                       }
-                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      View Job Details
-                    </button>
-
-                    <button
-                      onClick={() => handleSaveJob(job._id)}
-                      disabled={isSaving}
                       className={`px-4 py-2 rounded-lg border ${
-                        isSaved
-                          ? "bg-yellow-100 text-yellow-700 border-yellow-300"
-                          : "bg-white text-gray-700 border-gray-300"
+                        currentPage === index + 1
+                          ? "bg-blue-600 text-white"
+                          : "bg-white text-gray-700"
                       }`}
                     >
-                      {isSaving
-                        ? "Saving..."
-                        : isSaved
-                        ? "★ Saved"
-                        : "☆ Save"}
+                      {index + 1}
                     </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  )
+                )}
+
+                {/* Next */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, totalPages)
+                    )
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg border bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -16,6 +16,7 @@ import SavedJobs from "../pages/student/SavedJobs";
 import RecruiterDashboard from "../pages/recruiter/RecruiterDashboard";
 import RecruiterApplications from "../pages/recruiter/RecruiterApplications";
 import MyJobs from "../pages/recruiter/MyJobs";
+import CreateJob from "../pages/recruiter/CreateJob";
 import EditJob from "../pages/recruiter/EditJob";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import Resume from "../pages/student/Resume";
@@ -153,6 +154,16 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* Create Job */}
+<Route
+  path="/recruiter/jobs/create"
+  element={
+    <ProtectedRoute allowedRoles={["recruiter"]}>
+      <CreateJob />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Edit Job */}
         <Route
