@@ -1,5 +1,348 @@
+/* @import "tailwindcss"; */
+
 @import "tailwindcss";
 
+/* ================================
+   GLOBAL
+================================ */
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ================================
+   LIGHT THEME
+================================ */
+
+.light-theme {
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #111827;
+}
+
+/* ================================
+   DARK THEME
+================================ */
+
+.dark-theme {
+  min-height: 100vh;
+  background-color: #111827;
+  color: #f9fafb;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Main common backgrounds */
+
+.dark-theme .bg-white {
+  background-color: #1f2937 !important;
+}
+
+.dark-theme .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+.dark-theme .bg-gray-100 {
+  background-color: #1f2937 !important;
+}
+
+.dark-theme .bg-gray-200 {
+  background-color: #374151 !important;
+}
+
+/* Common colored light backgrounds */
+
+.dark-theme .bg-blue-50 {
+  background-color: #172554 !important;
+}
+
+.dark-theme .bg-green-50 {
+  background-color: #052e16 !important;
+}
+
+.dark-theme .bg-red-50 {
+  background-color: #450a0a !important;
+}
+
+.dark-theme .bg-yellow-50 {
+  background-color: #422006 !important;
+}
+
+.dark-theme .bg-purple-50 {
+  background-color: #2e1065 !important;
+}
+
+/* ================================
+   TEXT COLORS
+================================ */
+
+.dark-theme .text-black {
+  color: #f9fafb !important;
+}
+
+.dark-theme .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark-theme .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+.dark-theme .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.dark-theme .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark-theme .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.dark-theme .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* ================================
+   HEADINGS
+================================ */
+
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme h3,
+.dark-theme h4,
+.dark-theme h5,
+.dark-theme h6 {
+  color: #f9fafb;
+}
+
+/* ================================
+   INPUTS
+================================ */
+
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+
+.dark-theme input::placeholder,
+.dark-theme textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* ================================
+   BORDERS
+================================ */
+
+.dark-theme .border-gray-100 {
+  border-color: #374151 !important;
+}
+
+.dark-theme .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.dark-theme .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+/* ================================
+   TABLES
+================================ */
+
+.dark-theme table {
+  color: #f9fafb;
+}
+
+.dark-theme th,
+.dark-theme td {
+  border-color: #374151 !important;
+}
+
+.dark-theme .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #374151 !important;
+}
+
+/* ================================
+   CARDS / SHADOWS
+================================ */
+
+.dark-theme .shadow,
+.dark-theme .shadow-sm,
+.dark-theme .shadow-md,
+.dark-theme .shadow-lg,
+.dark-theme .shadow-xl,
+.dark-theme .shadow-2xl {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ================================
+   HOVER BACKGROUNDS
+================================ */
+
+.dark-theme .hover\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+.dark-theme .hover\:bg-gray-100:hover {
+  background-color: #374151 !important;
+}
+
+.dark-theme .hover\:bg-gray-200:hover {
+  background-color: #4b5563 !important;
+}
+
+/* ================================
+   LINKS
+================================ */
+
+.dark-theme a {
+  transition: color 0.2s ease;
+}
+
+/* ================================
+   HR
+================================ */
+
+.dark-theme hr {
+  border-color: #374151;
+}
+
+/* ================================
+   SELECT OPTIONS
+================================ */
+
+.dark-theme option {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+/* =========================================
+   GLOBAL DARK MODE - ALL JOBCONNECT PAGES
+========================================= */
+
+/* Background colors */
+.dark-theme [class~="bg-white"] {
+  background-color: #1f2937 !important;
+}
+
+.dark-theme [class~="bg-gray-50"] {
+  background-color: #111827 !important;
+}
+
+.dark-theme [class~="bg-gray-100"] {
+  background-color: #1f2937 !important;
+}
+
+.dark-theme [class~="bg-gray-200"] {
+  background-color: #374151 !important;
+}
+
+/* Text colors */
+.dark-theme [class~="text-black"] {
+  color: #f9fafb !important;
+}
+
+.dark-theme [class~="text-gray-900"] {
+  color: #f9fafb !important;
+}
+
+.dark-theme [class~="text-gray-800"] {
+  color: #f3f4f6 !important;
+}
+
+.dark-theme [class~="text-gray-700"] {
+  color: #e5e7eb !important;
+}
+
+.dark-theme [class~="text-gray-600"] {
+  color: #d1d5db !important;
+}
+
+.dark-theme [class~="text-gray-500"] {
+  color: #9ca3af !important;
+}
+
+/* Borders */
+.dark-theme [class~="border-gray-100"] {
+  border-color: #374151 !important;
+}
+
+.dark-theme [class~="border-gray-200"] {
+  border-color: #374151 !important;
+}
+
+.dark-theme [class~="border-gray-300"] {
+  border-color: #4b5563 !important;
+}
+
+/* Inputs */
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-color: #4b5563 !important;
+}
+
+.dark-theme input::placeholder,
+.dark-theme textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Tables */
+.dark-theme table {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-theme th {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark-theme td {
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+/* Cards */
+.dark-theme .rounded-lg,
+.dark-theme .rounded-xl {
+  border-color: #374151;
+}
+
+/* Main page */
+.dark-theme main {
+  background-color: #111827;
+}
+
+/* Buttons should keep their original colors */
+.dark-theme button {
+  transition: opacity 0.2s ease;
+}
+
+/* Links */
+.dark-theme a {
+  color: inherit;
+}
+
+/* Select dropdown */
+.dark-theme option {
+  /* background-color: #1f2937; */
+  background-color: white;
+  color: #f9fafb;
+}
 
 
 

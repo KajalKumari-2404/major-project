@@ -74,7 +74,7 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full bg-slate-900 border border-slate-600 text-white placeholder-slate-500 rounded-lg px-5 py-4 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-           />
+            />
           </div>
 
           {/* Password */}

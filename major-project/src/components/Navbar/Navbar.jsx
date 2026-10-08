@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
 import { useAuth } from "../../store/AuthContext";
+import useUIStore from "../../store/uiStore";
 
 const Navbar = () => {
   const { user, setUser } = useAuth();
+  const { isDarkMode, toggleDarkMode } = useUIStore();
 
   const handleLogout = async () => {
     try {
@@ -162,14 +164,34 @@ const Navbar = () => {
                 Register
               </Link>
             </>
+          // ) : (
+          //   <button
+          //     onClick={handleLogout}
+          //     className="hover:text-red-400 transition"
+          //   >
+          //     Logout
+          //   </button>
+          // )}
+
           ) : (
-            <button
-              onClick={handleLogout}
-              className="hover:text-red-400 transition"
-            >
-              Logout
-            </button>
-          )}
+  <>
+    <button
+      onClick={toggleDarkMode}
+      className="hover:text-yellow-400 transition"
+    >
+      {/* {isDarkMode ? "☀️ Light" : "🌙 Dark"} */}
+      
+      {isDarkMode ? "🌙 Dark" : "☀️ Light"}
+    </button>
+
+    <button
+      onClick={handleLogout}
+      className="hover:text-red-400 transition"
+    >
+      Logout
+    </button>
+  </>
+)}
 
         </div>
       </div>
