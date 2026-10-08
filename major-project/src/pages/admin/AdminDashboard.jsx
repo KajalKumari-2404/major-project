@@ -67,6 +67,7 @@ function AdminDashboard() {
         alert(data.message || "Something went wrong");
         return;
       }
+      
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>

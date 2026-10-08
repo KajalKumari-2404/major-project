@@ -26,7 +26,7 @@ const Home = () => {
             A complete job and career platform for students, recruiters,
             and admins — search jobs, track applications, manage postings,
             and grow your career.
-          </p> 
+          </p>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
