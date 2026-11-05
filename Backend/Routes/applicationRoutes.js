@@ -46,7 +46,6 @@ router.put(
 );
 
 // Schedule interview by recruiter
-
 router.put(
   "/:applicationId/interview",
   authMiddleware,
